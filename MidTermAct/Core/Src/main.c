@@ -138,14 +138,14 @@ int main(void)
   USER_GPIO_Init();
   USER_USART1_Init();
 
-  uint8_t keypad_chars[] = {'1', '2', '3', 'A', '4', '5', '6', 'B', '7', '8', '9', 'C', '\r', '0', '\n', 'D'};
+  uint8_t keypad_chars[] = {'1', '4', '7', '\r', '2', '5', '8', '0', '3', '6', '9', '\n', 'A', 'B', 'C', 'D'};
   uint8_t msg_buffer[256];
 
   uint8_t lastChar = 0xff;
   unsigned int charCounter = 0;
 
-  uint8_t currentLine = 0;
-  uint8_t currentRow = 0;
+  int8_t currentLine = 1;
+  int8_t currentRow = 0;
 
   LCD_Init();
   LCD_Cursor_ON();
@@ -169,6 +169,7 @@ int main(void)
 
 			  if(out == 0){
 				  selectedChar = keypad_chars[index];
+				  //selectedChar = index;
 			  }
 		  }
 	  }
@@ -179,8 +180,6 @@ int main(void)
 	  if(selectedChar != 0xff && charCounter == 1500){
 		  snprintf(msg_buffer, sizeof(msg_buffer), "%c", selectedChar);
 		  USER_USART1_Transmit(msg_buffer, strlen(msg_buffer));
-
-
 	  }
 
 	  lastChar = selectedChar;
@@ -190,13 +189,20 @@ int main(void)
 		  uint8_t inputChar = USER_USART1_Receive();
 		  //Handle writing character to lcd
 		  //Handle special chars
-		  if(inputChar == '\n'){
-			  if(currentLine == 0) currentLine = 1;
-			  else currentLine = 0;
-		  } else if(inputChar == '\r'){
+		  if(inputChar == '\r'){
+			  if(currentLine == 1) currentLine = 2;
+			  else currentLine = 1;
+			  currentRow = 0;
+
+		  } else if(inputChar == 0x7f){
+			  if(currentRow != 0) {
+				  LCD_Set_Cursor(currentLine, currentRow);
+				  LCD_Put_Char(' ');
+				  currentRow--;
+			  }
+		  } else if(inputChar >= 32 && inputChar <= 126) {
 			  currentRow++;
-			  if(currentRow >= 16) currentRow = 0; //Wrap around
-		  } else {
+			  if(currentRow >= 16) currentRow = 0;
 			  LCD_Set_Cursor(currentLine, currentRow);
 			  LCD_Put_Char(inputChar);
 		  }
@@ -260,10 +266,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 void USER_RCC_Init(void){
+	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 	RCC->APB2ENR	|=	RCC_APB2ENR_USART1EN
 						|	RCC_APB2ENR_IOPCEN
-						|	RCC_APB2ENR_IOPAEN
-						|   RCC_APB1ENR_TIM2EN;
+						|	RCC_APB2ENR_IOPAEN;
 }
 
 void USER_GPIO_Init(void){

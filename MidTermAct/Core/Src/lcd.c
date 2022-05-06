@@ -183,7 +183,7 @@ void LCD_Set_Cursor(unsigned char line, unsigned char column){
 		column--;
 	if( line != 0 )
 		line--;
-	address = ( line * 40 ) + column;
+	address = ( line * 0x40 ) + column;
 	address = 0x80U + ( address & 0x7FU );
 	LCD_Write_Cmd( address );
 }
