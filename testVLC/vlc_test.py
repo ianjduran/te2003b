@@ -3,6 +3,7 @@ import vlc
 import tkinter
 from time import sleep
 from glob import glob
+import serial
 
 #play button function
 def on_play():
@@ -17,6 +18,7 @@ def on_play():
         title.config(text=str(Media.get_meta(0)))
         status_label.config(text="NOW PLAYING:")
     show_label()
+
 #pause button function
 def on_pause():
     status_label.config(text="PAUSED")
@@ -63,6 +65,37 @@ def show_label():
     status_label.grid(row=0,column=0,padx=20,pady=20)
     title.grid(row=1,column=1)
 
+ser = serial.Serial('/dev/pts/3', 115200, timeout=0)
+
+def handle_serial_rx(input):
+    # TODO Add more commands
+    input = input.strip()
+    if input == 'p':
+        on_play()
+    elif input == 'n':
+        on_next()
+
+prev_name = ""
+def handle_serial_tx():
+    name = os.path.basename(files[current_song])
+    name = name.strip()[:16]
+
+    ## TODO Get song data
+    global prev_name
+    if prev_name == name:
+        return
+
+    prev_name = name
+    print(name)
+    #ser.write(name)
+
+def handle_serial():
+    input = ser.readlines()
+    if len(input) == 1:
+        handle_serial_rx(input[0])
+    handle_serial_tx()
+    tkinter_root.after(200, handle_serial)
+
 # Create vlc instance and media player
 player = vlc.MediaPlayer()
 # Set Window Handle
@@ -92,8 +125,6 @@ player.set_media(Media)
 
 print()
 
-
-
 # Set Labels
 status_label = tkinter.Label(tkinter_root, text="PONELE A PLAY CHE")
 title = tkinter.Label(tkinter_root)
@@ -110,8 +141,6 @@ next_btn = tkinter.Button(tkinter_root, text="siguiente joven", command = on_nex
 # Create previous Button
 prev_btn = tkinter.Button(tkinter_root, text="volvé bro", command = on_previous).grid(row=3,column=2,padx=20,pady=20)
 
-
-
+tkinter_root.after(200, handle_serial)
 tkinter_root.mainloop()
-
-
+ser.close()
