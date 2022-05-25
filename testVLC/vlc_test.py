@@ -7,6 +7,7 @@ import serial
 
 #play button function
 def on_play():
+    ser.write(b'play')
     player.play()
     sleep(0.1)
     if (player.is_playing() == 0):
@@ -17,6 +18,7 @@ def on_play():
         # set text
         title.config(text=str(Media.get_meta(0)))
         status_label.config(text="NOW PLAYING:")
+        ser
     show_label()
 
 #pause button function
@@ -65,11 +67,11 @@ def show_label():
     status_label.grid(row=0,column=0,padx=20,pady=20)
     title.grid(row=1,column=1)
 
-ser = serial.Serial('/dev/pts/3', 115200, timeout=0)
+ser = serial.Serial('/dev/ttyS0', 115200, timeout=0)
 
 def handle_serial_rx(input):
     # TODO Add more commands
-    input = input.strip()
+    input = input.strip().decode()
     if input == 'p':
         on_play()
     elif input == 'n':
@@ -91,6 +93,7 @@ def handle_serial_tx():
 
 def handle_serial():
     input = ser.readlines()
+    print(input)
     if len(input) == 1:
         handle_serial_rx(input[0])
     handle_serial_tx()
