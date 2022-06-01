@@ -64,8 +64,8 @@ all: main-build
 main-build: IPod32.elf secondary-outputs
 
 # Tool invocations
-IPod32.elf IPod32.map: $(OBJS) $(USER_OBJS) /home/abiel/Documents/TEC/IPod32/STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "IPod32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"/home/abiel/Documents/TEC/IPod32/STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="IPod32.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+IPod32.elf IPod32.map: $(OBJS) $(USER_OBJS) C:\Users\iandu\te2003b\IPod32\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "IPod32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\iandu\te2003b\IPod32\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="IPod32.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

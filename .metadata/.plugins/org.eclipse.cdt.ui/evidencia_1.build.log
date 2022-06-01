@@ -1,0 +1,10 @@
+12:09:10 **** Incremental Build of configuration Debug for project evidencia_1 ****
+make -j16 all 
+arm-none-eabi-size   evidencia_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17960	    124	   8388	  26472	   6768	evidencia_1.elf
+Finished building: default.size.stdout
+ 
+
+12:09:10 Build Finished. 0 errors, 0 warnings. (took 271ms)
+

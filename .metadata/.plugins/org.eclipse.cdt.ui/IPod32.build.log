@@ -1,0 +1,16 @@
+11:17:50 **** Incremental Build of configuration Debug for project IPod32 ****
+make -j16 all 
+arm-none-eabi-gcc -o "IPod32.elf" @"objects.list"   -mcpu=cortex-m3 -T"C:\Users\iandu\te2003b\IPod32\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="IPod32.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: IPod32.elf
+ 
+arm-none-eabi-size   IPod32.elf 
+arm-none-eabi-objdump -h -S  IPod32.elf  > "IPod32.list"
+   text	   data	    bss	    dec	    hex	filename
+  18524	    124	   8324	  26972	   695c	IPod32.elf
+Finished building: default.size.stdout
+ 
+Finished building: IPod32.list
+ 
+
+11:17:51 Build Finished. 0 errors, 0 warnings. (took 844ms)
+

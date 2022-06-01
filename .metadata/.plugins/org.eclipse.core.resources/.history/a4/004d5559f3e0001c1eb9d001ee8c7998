@@ -1,0 +1,19 @@
+/*
+ * poll_keyboard_task.c
+ *
+ *  Created on: May 30, 2022
+ *      Author: Ian Duran
+ */
+
+#include "poll_keyboard_task.h"
+#include "queuehandler.h"
+
+uint8_t poll_keyboard_button_task(uint8_t row, uint8_t col){
+	for(int i = 4; i < 8; i++){
+		GPIOA->ODR |= 1 << i;
+	}
+	GPIOA->ODR &= ~(1 << row);
+
+	// Read col
+	 GPIOA->IDR & (1 << col);
+}
