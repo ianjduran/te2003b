@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "poll_keyboard_task.h"
+#include "tx_task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,11 +57,29 @@ const osThreadAttr_t pollKeypad_attributes = {
 		.priority = (osPriority_t) osPriorityNormal,
 };
 
+osThreadId_t rxTaskHandle;
+const osThreadAttr_t rxTask_attributes = {
+		.name = "rxTask",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityNormal,
+};
+
+osThreadId_t txTaskHandle;
+const osThreadAttr_t txTask_attributes = {
+		.name = "txTask",
+		.stack_size = 128*4,
+		.priority = (osPriority_t) osPriorityNormal,
+};
+
 osMessageQueueId_t inputQueueHandle;
 const osMessageQueueAttr_t inputQueue_attributes = {
 		.name = "inputQueue",
 };
 
+osMessageQueueId_t rpiInQueueHandle;
+const osMessageQueueAttr_t rpiInQueue_attributes = {
+		.name = "rpiInQueue",
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -129,16 +148,16 @@ int main(void)
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   inputQueueHandle = osMessageQueueNew(20, sizeof(uint8_t), &inputQueue_attributes);
+  rpiInQueueHandle = osMessageQueueNew(5, sizeof(uint8_t), &rpiInQueue_attributes);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  txTaskHandle = osThreadNew(transmit_data_task, NULL, &txTask_attributes);
   pollKeypadTaskHandle = osThreadNew(poll_keyboard_button_task, NULL, &pollKeypad_attributes);
-
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -229,22 +248,6 @@ void USER_USART1_Init(void) {
 				|	USART_CR1_TE
 				|	USART_CR1_RE;
 	USART1->CR2 &=	~USART_CR2_STOP;
-}
-
-void USER_USART1_Transmit(uint8_t *pData, uint16_t size){
-	for(int i=0; i< size; i++){
-		while( (USART1->SR & USART_SR_TXE)==0 ){
-
-		}
-		USART1->DR = *pData++;
-	}
-}
-
-uint8_t USER_USART1_Receive(void){
-	while( (USART1->SR & USART_SR_RXNE)==0 ){
-
-	}
-	return USART1->DR;
 }
 
 void config_pin(GPIO_TypeDef *port, uint8_t pin, uint8_t mode){
