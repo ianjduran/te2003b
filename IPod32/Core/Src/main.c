@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "poll_keyboard_task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,6 +48,18 @@ const osThreadAttr_t defaultTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
+
+osThreadId_t pollKeypadTaskHandle;
+const osThreadAttr_t pollKeypad_attributes = {
+		.name = "pollKeypadTask",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityNormal,
+};
+
+osMessageQueueId_t inputQueueHandle;
+const osMessageQueueAttr_t inputQueue_attributes = {
+		.name = "inputQueue",
+};
 
 /* USER CODE END PV */
 
@@ -116,6 +128,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+  inputQueueHandle = osMessageQueueNew(20, sizeof(uint8_t), &inputQueue_attributes);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -124,6 +137,8 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  pollKeypadTaskHandle = osThreadNew(poll_keyboard_button_task, NULL, &pollKeypad_attributes);
+
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -294,6 +309,7 @@ void USER_GPIO_Init(void){
 	config_pin(GPIOA, 5, 1);
 	config_pin(GPIOA, 6, 1);
 	config_pin(GPIOA, 7, 1);
+	config_pin(GPIOC, 13, 1);
 }
 /* USER CODE END 4 */
 
@@ -310,6 +326,12 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+	uint8_t message;
+	osMessageQueueGet(inputQueueHandle, &message, NULL, 200);
+
+	GPIOC->BSRR = (message==1)?
+			 GPIO_BSRR_BR13:
+			 GPIO_BSRR_BS13;
     osDelay(1);
   }
   /* USER CODE END 5 */
