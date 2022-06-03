@@ -74,7 +74,7 @@ const osThreadAttr_t txTask_attributes = {
 osThreadId_t lcdTaskHandle;
 const osThreadAttr_t lcdTask_attributes = {
 		.name = "lcdTask",
-		.stack_size = 128 * 8,
+		.stack_size = 128 * 16,
 		.priority = (osPriority_t) osPriorityNormal,
 };
 
