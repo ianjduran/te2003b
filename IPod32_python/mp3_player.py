@@ -84,8 +84,8 @@ def on_previous():
 
 # Show labels
 def show_label():
-    status_label.grid(row=0,column=0,padx=20,pady=20)
-    title.grid(row=1,column=1)
+    status_label.grid(row=0,columnspan=4,padx=20,pady=20)
+    title.grid(row=1,columnspan=4)
 
 ser = serial.Serial('/dev/ttyS0', 9600, timeout=0)
 
@@ -155,22 +155,22 @@ set_song(player, vlc_instance, file_paths[current_song])
 print()
 
 # Set Labels
-status_label = tkinter.Label(tkinter_root, text="Let\'s start! Just hit Play!")
-title = tkinter.Label(tkinter_root)
+status_label = tkinter.Label(tkinter_root, text="WELCOME!")
+title = tkinter.Label(tkinter_root, text="Let\'s start! Just hit Play!")
 show_label()
 
 # Create play Button
 play_btn = tkinter.Button(tkinter_root, text ="Play", command = on_play)
 play_btn.grid(row=2,column=0,padx=20,pady=20)
-# Create stop Button
-stop_btn = tkinter.Button(tkinter_root, text ="Stop", command = on_stop)
-stop_btn.grid(row=2,column=2,padx=20,pady=20)
-# Create next Button
-next_btn = tkinter.Button(tkinter_root, text="Next", command = on_next)
-next_btn.grid(row=3,column=0,padx=20,pady=20)
 # Create previous Button
 prev_btn = tkinter.Button(tkinter_root, text="Previous", command = on_previous)
-prev_btn.grid(row=3,column=2,padx=20,pady=20)
+prev_btn.grid(row=2,column=1,padx=20,pady=20)
+# Create next Button
+next_btn = tkinter.Button(tkinter_root, text="Next", command = on_next)
+next_btn.grid(row=2,column=2,padx=20,pady=20)
+# Create stop Button
+stop_btn = tkinter.Button(tkinter_root, text ="Stop", command = on_stop)
+stop_btn.grid(row=2,column=3,padx=20,pady=20)
 
 tkinter_root.after(200, handle_serial)
 tkinter_root.mainloop()
