@@ -15,6 +15,8 @@ const osMessageQueueAttr_t lcdMessageHandleAttrs = {
 		.name = "lcdMessageHandle",
 };
 
+
+
 void init_lcd_task(){
 	LCD_Init();
 	lcdMsgHandle = osMessageQueueNew(5, sizeof(LCDData), NULL);
@@ -47,11 +49,11 @@ void lcd_task(){
 		size_t line2_size = strlen(data.line2);
 
 		//Clear lcd
-		LCD_Clear();
-		LCD_BarGraphic(0,0);
+		//LCD_Clear();
+		//LCD_BarGraphic(0,0);
 
-		//line1_delay_count++;
-		//line2_delay_count++;
+		line1_delay_count++;
+		line2_delay_count++;
 
 		if(line1_delay_count >= 250){
 			//Draw line 1

@@ -10,6 +10,7 @@
 
 
 extern osMessageQueueId_t inputQueueHandle;
+
 uint8_t pollButton(uint8_t row, uint8_t col){
 	//Set all row pins to 1, except polling row
 	for(int i = 4; i < 8; i++){
@@ -32,12 +33,10 @@ void poll_keyboard_button_task(void){
 			  for(int j = 0; j < 4; j++){
 				  int out = pollButton(j + 4, i);
 				  int index = i * 4 + j;
-
-				  isPressed = (out==0) ? 1 : 0;
-				  osMessageQueuePut(inputQueueHandle, &isPressed, 0U, 100);
-				  if(isPressed){
+				  if(out==0){
 					  snprintf(data, sizeof(data), "%c", keypad_chars[index]);
 					  set_lcd(data, "WAS PRESSED WUUWUWUWUWUWUWUWUUWUWUWUWUWUWUUWUWUWUW");
+					  osMessageQueuePut(inputQueueHandle,&(data), 0U, 100);
 				  }
 			  }
 			}
@@ -46,5 +45,3 @@ void poll_keyboard_button_task(void){
 
 	// Read col
 }
-
-
