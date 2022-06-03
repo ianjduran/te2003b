@@ -28,7 +28,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#include "LCDTask/LCDTask.h"
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -70,6 +70,14 @@ const osThreadAttr_t txTask_attributes = {
 		.stack_size = 128*4,
 		.priority = (osPriority_t) osPriorityNormal,
 };
+
+osThreadId_t lcdTaskHandle;
+const osThreadAttr_t lcdTask_attributes = {
+		.name = "lcdTask",
+		.stack_size = 128 * 8,
+		.priority = (osPriority_t) osPriorityNormal,
+};
+
 
 osMessageQueueId_t inputQueueHandle;
 const osMessageQueueAttr_t inputQueue_attributes = {
@@ -156,6 +164,7 @@ int main(void)
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  lcdTaskHandle = osThreadNew(lcd_task, NULL, &lcdTask_attributes);
   txTaskHandle = osThreadNew(transmit_data_task, NULL, &txTask_attributes);
   pollKeypadTaskHandle = osThreadNew(poll_keyboard_button_task, NULL, &pollKeypad_attributes);
   /* USER CODE END RTOS_THREADS */
