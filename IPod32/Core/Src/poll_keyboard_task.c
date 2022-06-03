@@ -9,6 +9,7 @@
 #include "LCDTask/LCDTask.h"
 
 
+
 extern osMessageQueueId_t inputQueueHandle;
 
 uint8_t pollButton(uint8_t row, uint8_t col){
@@ -27,13 +28,16 @@ uint8_t pollButton(uint8_t row, uint8_t col){
 void poll_keyboard_button_task(void){
 	uint8_t keypad_chars[] = {'1', '4', '7', '\r', '2', '5', '8', '0', '3', '6', '9', '\n', 'A', 'B', 'C', 'D'};
 	char data[25];
-	uint8_t isPressed;
+	int index;
 	while(1){
 		for(int i = 0; i < 4; i++){
 			  for(int j = 0; j < 4; j++){
 				  int out = pollButton(j + 4, i);
-				  int index = i * 4 + j;
+				  index = i * 4 + j;
 				  if(out==0){
+					  while(pollButton(j + 4, i)==0){
+
+					  }
 					  snprintf(data, sizeof(data), "%c", keypad_chars[index]);
 					  set_lcd(data, "WAS PRESSED WUUWUWUWUWUWUWUWUUWUWUWUWUWUWUUWUWUWUW");
 					  osMessageQueuePut(inputQueueHandle,&(data), 0U, 100);
