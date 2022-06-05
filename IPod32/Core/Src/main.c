@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "poll_keyboard_task.h"
 #include "tx_task.h"
+#include "rx_tast.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -156,7 +157,7 @@ int main(void)
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   inputQueueHandle = osMessageQueueNew(20, sizeof(uint8_t), &inputQueue_attributes);
-  rpiInQueueHandle = osMessageQueueNew(5, sizeof(uint8_t), &rpiInQueue_attributes);
+  rpiInQueueHandle = osMessageQueueNew(25, sizeof(uint8_t), &rpiInQueue_attributes);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -167,6 +168,7 @@ int main(void)
   /* add threads, ... */
   lcdTaskHandle = osThreadNew(lcd_task, NULL, &lcdTask_attributes);
   txTaskHandle = osThreadNew(transmit_data_task, NULL, &txTask_attributes);
+  rxTaskHandle = osThreadNew(receive_data_task, NULL, &rxTask_attributes);
   pollKeypadTaskHandle = osThreadNew(poll_keyboard_button_task, NULL, &pollKeypad_attributes);
   /* USER CODE END RTOS_THREADS */
 
@@ -345,7 +347,8 @@ void StartDefaultTask(void *argument)
 //	GPIOC->BSRR = (message==1)?
 //			 GPIO_BSRR_BR13:
 //			 GPIO_BSRR_BS13;
-//    osDelay(1);
+
+    osDelay(1);
   }
   /* USER CODE END 5 */
 }
