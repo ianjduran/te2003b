@@ -4,12 +4,28 @@ import tkinter
 from time import sleep
 from glob import glob
 import serial
-
+import status
 
 meta_info =  {vlc.Meta.Title: None,
             vlc.Meta.Artist: None,
             vlc.Meta.Album: None,
             vlc.Meta.Date: None}
+
+### INIT ###
+# Create vlc instance and media player
+vlc_instance = vlc.Instance()
+player = vlc.MediaPlayer()
+# Set Window Handle
+tkinter_root = tkinter.Tk()
+tkinter_root.title("Mp3 player")
+player.set_hwnd(tkinter_root.winfo_id())
+
+current_song_index = 0
+current_song : vlc.Media
+
+def set_btn_img( btn: tkinter.Button, img: tkinter.PhotoImage):
+    btn.configure(image= img)
+    btn.image = img
 
 def set_song(instance_player, instance_vlc, song_path):
     Media = instance_vlc.media_new(song_path)
@@ -24,10 +40,11 @@ def get_metadata(song):
 
 #play button function
 def on_play():
+    global current_song
     if (player.is_playing() == 0 and player.get_media() == None): #Not playing and has no song
         title.config(text='Whoops. Something\'s wrong. Let\'s try again')
         return
-    if(player.is_playing() == 0):
+    if(player.is_playing() == 0): #Play Action
         player.play()
         play_btn["text"]="Pause"
         sleep(0.1)
@@ -41,22 +58,16 @@ def on_play():
         title.config(text=str(current_song.get_meta(0)))
         status_label.config(text="NOW PLAYING:")
         # set image
-        play_btn.configure(image=pause_icon)
-        play_btn.image = pause_icon
-        print("-----SERIAL-----")
-        ## TODO FIX FOR MORE INFO, JUST WORKS FOR TITLE
-        track_info = get_metadata(current_song)
-        tmp = (str(track_info[0]) + '\0').encode('ascii')
-        ser.write(tmp)
-        print("-----SERIAL-----")
-    else:
+        set_btn_img(play_btn,pause_icon)
+        # Write to Serial
+        write_status_to_lcd(current_song, status.PLAY)
+    else: # Pause Action
         player.pause()
         play_btn["text"]="Play"
         status_label.config(text="PAUSED")
         # set image
-        play_btn.configure(image=play_icon)
-        play_btn.image = play_icon
-
+        set_btn_img(play_btn, play_icon)
+        write_status_to_lcd(current_song, status.PAUSE)
         
     show_label()
 
@@ -69,40 +80,36 @@ def on_stop():
     # set image
     play_btn.configure(image=play_icon)
     play_btn.image = play_icon
+    write_status_to_lcd(current_song, status.STOP)
 
 #next button function
 def on_next():
-    global Media
-    global current_song
+    global current_song_index
     player.stop()
-    next_song=current_song+1
+    next_song=current_song_index+1
     # check if there is next song
     if(next_song<len(file_paths)):
-        current_song=next_song
+        current_song_index=next_song
         # Set media to next song and attach to player
-        #Media = vlc_instance.media_new()
-        #player.set_media(Media)
-        set_song(player, vlc_instance, file_paths[current_song])
+        set_song(player, vlc_instance, file_paths[current_song_index])
         on_play()
     else: # there is no next song
         title.config(text="You reached the end!")
         # set image
         play_btn.configure(image=play_icon)
         play_btn.image = play_icon
+        write_str_to_lcd("Phew.. you made it this far! Press play to listen to the last song!", status.END)
 
 #previous button function
 def on_previous():
-    global current_song
-    global Media
+    global current_song_index
     player.stop()
-    next_song=current_song-1
+    next_song=current_song_index-1
     # Check if there is a previous song
     if(next_song>-1):
-        current_song=next_song
+        current_song_index=next_song
         # set media to previous song and attach to player
-        set_song(player, vlc_instance, file_paths[current_song])
-        # Media = vlc_instance.media_new(file_paths[current_song])
-        # player.set_media(Media)
+        set_song(player, vlc_instance, file_paths[current_song_index])
     on_play() # If there is no previous song, it will replay the first one.
 
 # Show labels
@@ -113,9 +120,7 @@ def show_label():
 ser = serial.Serial('/dev/ttyS0', 9600, timeout=0)
 
 def handle_serial_rx(input):
-    # TODO Add more commands
     input = input.strip().decode()
-    print(input)
     if input == '*':
         on_play()
     elif input =='0':
@@ -125,33 +130,54 @@ def handle_serial_rx(input):
     elif input == 'D':
         on_stop()
 
+"""
 prev_name = ""
 def handle_serial_tx():
-    name = os.path.basename(file_paths[current_song])
+    name = os.path.basename(file_paths[current_song_index])
     name = name.strip()[:16]
+
+    global current_song
+    
+    current_song = player.get_media()
+    current_song.parse_with_options(
+            parse_flag=vlc.MediaParseFlag.local,
+            timeout=200
+    )
 
     ## TODO Get song data
     global prev_name
     if prev_name == name:
         return
 
-    prev_name = name
-    print(name)
+    if current_song == None:
+        return
+    
+    
+    track_info = get_metadata(current_song)
+    tmp = (str(track_info[0]) + '\0').encode('ascii')
+    ser.write(tmp)
+
     #ser.write(name)
+"""
+
+def write_status_to_lcd(song, status_text):
+    track_info = get_metadata(song)
+    lcd1_text = " - ".join([str(e) for e in track_info.values()])
+    data_out = ("{},{}".format(lcd1_text,status_text) + '\0').encode('ascii') 
+    ser.write(data_out)
+
+def write_str_to_lcd(text1,text2):
+    data_out = ("{},{}".format(text1,text2) + '\0').encode('ascii') 
+    ser.write(data_out)
 
 def handle_serial():
     input = ser.readlines()
     if len(input) == 1:
         handle_serial_rx(input[0])
-    handle_serial_tx()
+    # handle_serial_tx()
     tkinter_root.after(200, handle_serial)
 
-# Create vlc instance and media player
-player = vlc.MediaPlayer()
-# Set Window Handle
-tkinter_root = tkinter.Tk()
-tkinter_root.title("Mp3 player")
-player.set_hwnd(tkinter_root.winfo_id())
+
 
 
 # Get Directory
@@ -168,13 +194,7 @@ for i in file_paths:
 print()
 print(str(len(file_paths)) + ' file_paths')
 
-
-vlc_instance = vlc.Instance()
-#Create and Attach new media file
-current_song = 0
-# Media  = vlc_instance.media_new(file_paths[current_song])
-# player.set_media(Media)
-set_song(player, vlc_instance, file_paths[current_song])
+set_song(player, vlc_instance, file_paths[current_song_index])
 print()
 
 # Set Labels
