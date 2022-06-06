@@ -163,11 +163,11 @@ def handle_serial_tx():
 def write_status_to_lcd(song, status_text):
     track_info = get_metadata(song)
     lcd1_text = " - ".join([str(e) for e in track_info.values()])
-    data_out = ("{},{}".format(lcd1_text,status_text) + '\0').encode('ascii') 
+    data_out = ("{},{}".format(lcd1_text,status_text) + '\0').encode('utf-8') 
     ser.write(data_out)
 
 def write_str_to_lcd(text1,text2):
-    data_out = ("{},{}".format(text1,text2) + '\0').encode('ascii') 
+    data_out = ("{},{}".format(text1,text2) + '\0').encode('utf-8') 
     ser.write(data_out)
 
 def handle_serial():
@@ -222,6 +222,6 @@ next_btn.grid(row=2,column=2,padx=20,pady=20)
 stop_btn = tkinter.Button(tkinter_root, text ="Stop", image=stop_icon, command = on_stop)
 stop_btn.grid(row=2,column=3,padx=20,pady=20)
 
-tkinter_root.after(200, handle_serial)
+tkinter_root.after(100, handle_serial)
 tkinter_root.mainloop()
 ser.close()
