@@ -20,7 +20,8 @@ const osMessageQueueAttr_t lcdMessageHandleAttrs = {
 void init_lcd_task(){
 	LCD_Init();
 	lcdMsgHandle = osMessageQueueNew(5, sizeof(LCDData), NULL);
-	set_lcd("Hello World Hola Ian Hola abiel Hola andy hola diego", "Buenas buenas buenas buenas!");
+//	set_lcd("Hello World Hola Ian Hola abiel Hola andy hola diego", "Buenas buenas buenas buenas!");
+	set_lcd("Welcome to our Mp3 Player! Let's start!", "Created by Abiel, Ian, Andy and Diego!! ");
 }
 
 void lcd_task(){
