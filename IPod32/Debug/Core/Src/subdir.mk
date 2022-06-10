@@ -1,10 +1,12 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (9-2020-q2-update)
+# Toolchain: GNU Tools for STM32 (10.3-2021.10)
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/Src/MFRC522.c \
+../Core/Src/RFIDTask.c \
 ../Core/Src/freertos.c \
 ../Core/Src/lcd.c \
 ../Core/Src/main.c \
@@ -20,6 +22,8 @@ C_SRCS += \
 ../Core/Src/tx_task.c 
 
 OBJS += \
+./Core/Src/MFRC522.o \
+./Core/Src/RFIDTask.o \
 ./Core/Src/freertos.o \
 ./Core/Src/lcd.o \
 ./Core/Src/main.o \
@@ -35,6 +39,8 @@ OBJS += \
 ./Core/Src/tx_task.o 
 
 C_DEPS += \
+./Core/Src/MFRC522.d \
+./Core/Src/RFIDTask.d \
 ./Core/Src/freertos.d \
 ./Core/Src/lcd.d \
 ./Core/Src/main.d \
@@ -51,13 +57,13 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Core/Src/%.o: ../Core/Src/%.c Core/Src/subdir.mk
+Core/Src/%.o Core/Src/%.su: ../Core/Src/%.c Core/Src/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3 -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
 
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/freertos.d ./Core/Src/freertos.o ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/poll_keyboard_task.d ./Core/Src/poll_keyboard_task.o ./Core/Src/rx_task.d ./Core/Src/rx_task.o ./Core/Src/serial.d ./Core/Src/serial.o ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_timebase_tim.d ./Core/Src/stm32f1xx_hal_timebase_tim.o ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/tx_task.d ./Core/Src/tx_task.o
+	-$(RM) ./Core/Src/MFRC522.d ./Core/Src/MFRC522.o ./Core/Src/MFRC522.su ./Core/Src/RFIDTask.d ./Core/Src/RFIDTask.o ./Core/Src/RFIDTask.su ./Core/Src/freertos.d ./Core/Src/freertos.o ./Core/Src/freertos.su ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/lcd.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/poll_keyboard_task.d ./Core/Src/poll_keyboard_task.o ./Core/Src/poll_keyboard_task.su ./Core/Src/rx_task.d ./Core/Src/rx_task.o ./Core/Src/rx_task.su ./Core/Src/serial.d ./Core/Src/serial.o ./Core/Src/serial.su ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_hal_timebase_tim.d ./Core/Src/stm32f1xx_hal_timebase_tim.o ./Core/Src/stm32f1xx_hal_timebase_tim.su ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su ./Core/Src/tx_task.d ./Core/Src/tx_task.o ./Core/Src/tx_task.su
 
 .PHONY: clean-Core-2f-Src
 
