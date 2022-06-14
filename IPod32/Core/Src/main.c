@@ -96,10 +96,6 @@ const osMessageQueueAttr_t inputQueue_attributes = {
 		.name = "inputQueue",
 };
 
-osMessageQueueId_t rpiInQueueHandle;
-const osMessageQueueAttr_t rpiInQueue_attributes = {
-		.name = "rpiInQueue",
-};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -170,7 +166,6 @@ int main(void)
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   inputQueueHandle = osMessageQueueNew(20, sizeof(uint8_t), &inputQueue_attributes);
-  rpiInQueueHandle = osMessageQueueNew(25, sizeof(uint8_t), &rpiInQueue_attributes);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -407,12 +402,6 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-//	uint8_t message;
-//	osMessageQueueGet(inputQueueHandle, &message, NULL, 200);
-//
-//	GPIOC->BSRR = (message==1)?
-//			 GPIO_BSRR_BR13:
-//			 GPIO_BSRR_BS13;
 
     osDelay(1);
   }
