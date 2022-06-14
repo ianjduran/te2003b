@@ -65,6 +65,7 @@ osThreadId_t rxTaskHandle;
 const osThreadAttr_t rxTask_attributes = {
 		.name = "rxTask",
 		.stack_size = 128 * 4,
+//		.priority = (osPriority_t) osPriorityAboveNormal,
 		.priority = (osPriority_t) osPriorityNormal,
 };
 
@@ -178,9 +179,9 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  rxTaskHandle = osThreadNew(receive_data_task, NULL, &rxTask_attributes);
   lcdTaskHandle = osThreadNew(lcd_task, NULL, &lcdTask_attributes);
   txTaskHandle = osThreadNew(transmit_data_task, NULL, &txTask_attributes);
-  rxTaskHandle = osThreadNew(receive_data_task, NULL, &rxTask_attributes);
   pollKeypadTaskHandle = osThreadNew(poll_keyboard_button_task, NULL, &pollKeypad_attributes);
   rfidTaskHandle = osThreadNew(rfid_task, NULL, &rfidTask_attributes);
   /* USER CODE END RTOS_THREADS */
@@ -309,7 +310,9 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void USER_USART1_Init(void) {
-	USART1->BRR	=	0x1D4C;
+//	USART1->BRR	=	0x1D4C; //9600
+//	USART1->BRR	=	0x027A; //115200
+	USART1->BRR	=	0x3A98; //4800
 	USART1->CR1 &=	~USART_CR1_M
 				&	~USART_CR1_WAKE
 				&	~USART_CR1_PCE
