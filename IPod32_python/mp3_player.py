@@ -11,6 +11,13 @@ meta_info =  {vlc.Meta.Title: None,
             vlc.Meta.Album: None,
             vlc.Meta.Date: None}
 
+
+rfid_songs = {
+    '1': None,
+    '2': None,
+    '3': None
+}
+
 ### INIT ###
 # Create vlc instance and media player
 vlc_instance = vlc.Instance()
@@ -120,7 +127,9 @@ def show_label():
 ser = serial.Serial('/dev/ttyS0', 9600, timeout=0)
 
 def handle_serial_rx(input):
+    global current_song_index
     input = input.strip().decode()
+    print(input)
     if input == '*':
         on_play()
     elif input =='0':
@@ -129,36 +138,18 @@ def handle_serial_rx(input):
         on_next()
     elif input == 'D':
         on_stop()
+    elif input== '1' or input== '2' or input== '3':
+        print(rfid_songs)
+        if(rfid_songs[input]!=None):
+            current_song_index=rfid_songs[input]
+            print(file_paths[current_song_index])
+            set_song(player, vlc_instance, file_paths[current_song_index])
+            player.stop()
+            on_play()
+        else:
+            print(current_song_index, "->", input)
+            rfid_songs[input] = current_song_index
 
-"""
-prev_name = ""
-def handle_serial_tx():
-    name = os.path.basename(file_paths[current_song_index])
-    name = name.strip()[:16]
-
-    global current_song
-    
-    current_song = player.get_media()
-    current_song.parse_with_options(
-            parse_flag=vlc.MediaParseFlag.local,
-            timeout=200
-    )
-
-    ## TODO Get song data
-    global prev_name
-    if prev_name == name:
-        return
-
-    if current_song == None:
-        return
-    
-    
-    track_info = get_metadata(current_song)
-    tmp = (str(track_info[0]) + '\0').encode('ascii')
-    ser.write(tmp)
-
-    #ser.write(name)
-"""
 
 def write_status_to_lcd(song, status_text):
     track_info = get_metadata(song)
@@ -175,7 +166,7 @@ def handle_serial():
     if len(input) == 1:
         handle_serial_rx(input[0])
     # handle_serial_tx()
-    tkinter_root.after(200, handle_serial)
+    tkinter_root.after(100, handle_serial)
 
 
 
