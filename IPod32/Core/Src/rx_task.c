@@ -19,32 +19,32 @@ uint8_t lcd1[128];
 uint8_t lcd2[128];
 uint32_t sep = 0;
 
-
 extern osMessageQueueId_t rpiInQueueHandle;
-uint8_t receive_data_task(void){
+uint8_t receive_data_task(void) {
 
-	while (1){
-		while(msg_len == 0 && i != BUF_LEN){
+	while (1) {
+//		osKernelLock();
+		while (msg_len == 0 && i != BUF_LEN) {
 			buf[i] = USER_USART1_Receive();
-			if(buf[i]==','){
+			if (buf[i] == ',') {
 				sep = i;
 			}
-			if(buf[i]== '\0'){
-				msg_len= i+1;
+			if (buf[i] == '\0') {
+				msg_len = i + 1;
 				i = 0;
 				//end msg
 				break;
 			}
 			i++;
 		}
+//		osKernelUnlock();
 
-		if(msg_len>0){
+		if (msg_len > 0) {
 			//Process msg
 			strncpy(lcd1, buf, sep);
-			strncpy(lcd2, buf+sep+1, msg_len-sep-1);
-			lcd1[sep]='\0';
+			strncpy(lcd2, buf + sep + 1, msg_len - sep - 1);
+			lcd1[sep] = '\0';
 			set_lcd(lcd1, lcd2);
-
 
 			msg_len = 0;
 			sep = 0;
