@@ -1,0 +1,3 @@
+[submodule "iPod32"]
+	path = iPod32
+	url = https://github.com/ianjduran/iPod32.git
