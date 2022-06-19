@@ -14,6 +14,6 @@
 #include "serial.h"
 #include "queue.h"
 
-uint8_t receive_data_task();
+void receive_data_task();
 
 #endif /* INC_RX_TAST_H_ */

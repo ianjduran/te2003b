@@ -20,7 +20,7 @@ uint8_t lcd2[128];
 uint32_t sep = 0;
 
 
-uint8_t receive_data_task(void) {
+void receive_data_task(void) {
 
 	while (1) {
 //		osKernelLock();

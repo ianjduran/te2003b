@@ -33,9 +33,7 @@ void poll_keyboard_button_task(void) {
 				int out = pollButton(j + 4, i);
 				index = i * 4 + j;
 				if (out == 0) {
-					while (pollButton(j + 4, i) == 0) {
-
-					}
+					while (pollButton(j + 4, i) == 0) {}
 					snprintf(data, sizeof(data), "%c", keypad_chars[index]);
 //					  set_lcd(data, "WAS PRESSED WUUWUWUWUWUWUWUWUUWUWUWUWUWUWUUWUWUWUW");
 					osMessageQueuePut(inputQueueHandle, &(data), 0U, 100);
