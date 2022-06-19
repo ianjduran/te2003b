@@ -10,9 +10,9 @@
 
 extern osMessageQueueId_t inputQueueHandle;
 
-uint8_t pollButton(uint8_t row, uint8_t col){
+uint8_t pollButton(uint8_t row, uint8_t col) {
 	//Set all row pins to 1, except polling row
-	for(int i = 4; i < 8; i++){
+	for (int i = 4; i < 8; i++) {
 		GPIOA->ODR |= 1 << i;
 	}
 	GPIOA->ODR &= ~(1 << row);
@@ -22,31 +22,26 @@ uint8_t pollButton(uint8_t row, uint8_t col){
 	return GPIOA->IDR & (1 << col);
 }
 
-
-void poll_keyboard_button_task(void){
-	uint8_t keypad_chars[] = {'1', '4', '7', '*', '2', '5', '8', '0', '3', '6', '9', '#', 'A', 'B', 'C', 'D'};
-	char data[25], title[100]="";
-	uint8_t in;
-	char temp[20] = "";
+void poll_keyboard_button_task(void) {
+	uint8_t keypad_chars[] = { '1', '4', '7', '*', '2', '5', '8', '0', '3', '6',
+			'9', '#', 'A', 'B', 'C', 'D' };
+	char data[25];
 	int index;
-	while(1){
-		for(int i = 0; i < 4; i++){
-			  for(int j = 0; j < 4; j++){
-				  int out = pollButton(j + 4, i);
-				  index = i * 4 + j;
-				  if(out==0){
-					  while(pollButton(j + 4, i) == 0){
-
-					  }
-					  snprintf(data, sizeof(data), "%c", keypad_chars[index]);
+	while (1) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				int out = pollButton(j + 4, i);
+				index = i * 4 + j;
+				if (out == 0) {
+					while (pollButton(j + 4, i) == 0) {}
+					snprintf(data, sizeof(data), "%c", keypad_chars[index]);
 //					  set_lcd(data, "WAS PRESSED WUUWUWUWUWUWUWUWUUWUWUWUWUWUWUUWUWUWUW");
-					  osMessageQueuePut(inputQueueHandle,&(data), 0U, 100);
+					osMessageQueuePut(inputQueueHandle, &(data), 0U, 100);
 
-
-				  }
-			  }
+				}
 			}
-		osDelay(1);
+		}
+		osDelay(2);
 	}
 
 	// Read col
